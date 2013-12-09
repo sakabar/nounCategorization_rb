@@ -1,2 +1,9 @@
 /nounLists
 /feature
+
+status
+log
+/output
+*.tasks
+
+/node.txt
