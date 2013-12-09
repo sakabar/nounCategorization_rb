@@ -1,0 +1,70 @@
+# -*- Shell-script -*-
+
+PS1_ORIG=$PS1
+preexec () {
+	if [ "$1" = "quit" ]; then
+	    PS1=$PS1_ORIG
+	fi
+}
+precmd () {
+	export PS1='[%m-(%~)'`gxpc prompt 2> /dev/null`'] %'
+}
+echo -n "\033kgxp\033\\"
+alias e='gxpc e'
+alias ecd='gxpc cd'
+alias smask='gxpc smask'
+alias rmask='gxpc rmask'
+alias explore='gxpc explore'
+alias quit='gxpc quit'
+acd() { cd $1 ; ecd $1}
+# gxpc use ssh `hostname`	[bpt]
+# gxpc use ssh [bpt]      [bpt]
+# gxpc use ssh [bpt]      suama
+# gxpc use ssh [bpt]      yokan
+# gxpc use ssh [bpt]      biscuit
+# gxpc use ssh [bpt]      basil
+# gxpc use ssh [bpt]      tsumire
+# gxpc use ssh [bpt]      plane01
+# gxpc use ssh [bpt]      plane02	
+# gxpc use ssh [bpt]      kimuchi
+# gxpc use ssh [bpt]      kaiji
+#gxpc use ssh `hostname`      suama
+#gxpc use ssh `hostname`      yokan
+#gxpc use ssh `hostname`      biscuit
+
+#root nodeはbasilを想定
+#gxpc use ssh `hostname`  tsumire
+
+gxpc use ssh  `hostname` tsumire
+
+gxpc use ssh  tsumire    plane01
+gxpc use ssh  tsumire    plane02
+gxpc use ssh  tsumire    basil
+
+gxpc use ssh  plane01    anmitsu
+gxpc use ssh  plane01    biscuit
+
+gxpc use ssh  plane02    kaiji
+gxpc use ssh  plane02    kimuchi
+
+gxpc use ssh  basil      suama
+gxpc use ssh  basil      taiyaki
+gxpc use ssh  basil      yokan
+
+# gxpc use ssh  plane01   tsumire
+# gxpc use ssh  tsumire   basil
+# gxpc use ssh  plane01   suama
+# gxpc use ssh  plane02   cream
+
+#gxpc use ssh  basil     pla
+#gxpc use ssh  basil     suama
+#gxpc use ssh  basil     biscuit
+#gxpc use ssh  basil     kimuchi
+#gxpc use ssh  basil     kaiji
+#gxpc use ssh  basil     cream
+
+explore -t $HOME/gxp3/hosts
+
+#ルートノードの削除(ルートノードがcreamの場合)
+e 'hostname | grep -v cream'
+smask
