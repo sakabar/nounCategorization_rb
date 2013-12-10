@@ -9,6 +9,9 @@ PWD=~/nounCategorization_rb
 #GXP3のノード数
 NODE=`cut -d ' ' -f2 /home/lr/tsakaki/gxp3/hosts | ./sum_stdin.sh`
 
+#gxp3を利用しない
+NODE=1
+
 #gxp3rcの読み込み
 echo "node loading..." > $PWD/node.txt
 source $PWD/gxp3rc
@@ -18,7 +21,7 @@ do
 done
 
 echo ""
-echo "NODE GOT!!"
+echo "Got Nodes!!"
 
 acd $PWD
 
@@ -30,7 +33,8 @@ echo `gxpc e hostname | sort | uniq -c` >> ./node.txt
 echo "Sum:"$NODE >> ./node.txt
 
 
-#もともと:gxpを使わない場合
+#もともと: gxpを使わない場合
+#(srcフォルダを作る前の話なので、このままだと通らない)
 # for f in $corpus_dir/*.bz2
 # do
 #   bzcat $f | nkf -Lu | ruby nounExtracter.rb
@@ -51,7 +55,7 @@ do
   cnt=$[$cnt + 1]
   input=$f
 
-  echo "$id /home/lr/tsakaki/nounCategorization_rb/extractNoun.sh $input" >> $task_file
+  echo "$id /home/lr/tsakaki/nounCategorization_rb/scanKnpLine.sh $input" >> $task_file
 #とりあえず1つのファイルのみ
   break
 done
