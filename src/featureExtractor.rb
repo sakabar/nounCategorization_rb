@@ -81,6 +81,11 @@ index = wordChunks.find_index{|chunk| /^#{noun}/ =~ chunk}
 
 end
 
+def getNcf1Feature(noun, knpLines = @knpLines)
+
+return nil
+end
+
 
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
