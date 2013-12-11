@@ -65,6 +65,23 @@ def getDemoFeature(noun, knpLines = @knpLines)
 # return ["demo:この"]
 end
 
+def getSufFeature(noun, knpLines = @knpLines)
+
+#最初のindexしか得られないので注意
+wordChunks = getWordChunks(knpLines)
+index = wordChunks.find_index{|chunk| /^#{noun}/ =~ chunk}
+  if index + 1 < wordChunks.length
+    chunk = wordChunks[index + 1]
+    if /名詞性名詞接尾辞/ =~ chunk
+      return ["suf:" + chunk.split(" ")[2]]
+    end
+  else
+    return []
+  end
+
+end
+
+
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
     modifieeIndex = chunk_array.index(chunk)
@@ -205,5 +222,10 @@ def getCfType(chunk, noun)
   else
     return nil
   end
+end
+
+
+def getWordChunks(chunk)
+return chunk.find_all{|chunk| not (/^[\*\+]/ =~ chunk)}
 end
 
