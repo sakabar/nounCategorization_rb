@@ -40,12 +40,26 @@ class FeatureExtractor
 
   def getCallFeature(noun, knpLines = @knpLines)
     chunks = getAstChunks(noun)
-    ans = chunks.find_all {|chunk| /#{Regexp.escape("<係:ト格>","U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all {|chunk| /#{Regexp.escape("正規化代表表記:言う/いう", "U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}
+    ans = chunks.find_all {|chunk| /#{Regexp.escape("<係:ト格>","U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /#{Regexp.escape("正規化代表表記:言う/いう", "U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}
+
 
 
     return ans.map{|str| "call:" + str}
   end
   
+  def getCfFeature(noun, knpLines = @knpLines)
+    #return ["cf:歩く:動:ガ格"]
+
+    declinableChunks = getPlusChunks(noun).map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /<用言:.*?>/ =~ chunk}
+
+#.map {|chunk| mergeNormalizedForm (getNormalizedForm(chunk))}
+
+
+    ans = declinableChunks.map{|chunk| "cf:" + getHyouki(getNormalizedForm(chunk)) + ":" + getDeclinableType(chunk) + ":" + getCfType(chunk, noun) + "格"}
+
+    return ans
+  end
+
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
     modifieeIndex = chunk_array.index(chunk)
@@ -92,6 +106,7 @@ class FeatureExtractor
   def getChunks(noun, ch, knpLines = @knpLines)
     ans = []
     tmpChunk = ""
+
     knpLines.each do |line|
       if /^#{Regexp.escape(ch, "U")}\s/ =~ line
         tmpChunk = line
@@ -126,6 +141,7 @@ def getModifieeIndex(chunk)
   end
 end
 
+#チャンクの正規化代表表記を返す
 def getNormalizedForm(chunk)
   ans = nil
   if /#{Regexp.escape("<正規化代表表記:","U")}(.*?)>/ =~ chunk
@@ -167,6 +183,22 @@ def getYomi(str)
     return str.split("/")[1]
   else 
     raise "ERROR: #{__LINE__}"
+  end
+end
+
+def getDeclinableType(chunk)
+  if /<用言:(.*?)>/ =~ chunk
+    return $1
+  else
+    return nil
+  end
+end
+
+def getCfType(chunk, noun)
+  if /<格解析結果:.*[;:](.*?)\/[C]\/太郎/u =~ chunk
+    return $1
+  else
+    return nil
   end
 end
 
