@@ -60,6 +60,12 @@ class FeatureExtractor
     return ans
   end
 
+def getSufFeature
+
+
+end
+
+
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
     modifieeIndex = chunk_array.index(chunk)
