@@ -51,13 +51,19 @@ class FeatureExtractor
 
     declinableChunks = getPlusChunks(noun).map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /<用言:.*?>/ =~ chunk}
 
-#.map {|chunk| mergeNormalizedForm (getNormalizedForm(chunk))}
-
-
     ans = declinableChunks.map{|chunk| "cf:" + getHyouki(getNormalizedForm(chunk)) + ":" + getDeclinableType(chunk) + ":" + getCfType(chunk, noun) + "格"}
 
     return ans
   end
+
+def getDemoFeature(noun, knpLines = @knpLines)
+# a = getPlusChunks(noun).map{|chunk| getModifier(chunk)}.flatten.find_all{|chunk| /<連体修飾>/ =~ chunk}
+
+# #この
+# #これらの
+
+# return ["demo:この"]
+end
 
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
