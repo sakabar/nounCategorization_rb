@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #テキストの列の受け取り、解析して、そのテキスト内の名詞を保持する
 class FeatureExtractor
   attr_reader :textID, :knpLines, :nounList
@@ -40,7 +39,7 @@ class FeatureExtractor
 
   def getCallFeature(noun, knpLines = @knpLines)
     chunks = getAstChunks(noun)
-    ans = chunks.find_all {|chunk| /#{Regexp.escape("<係:ト格>","U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /#{Regexp.escape("正規化代表表記:言う/いう", "U")}/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}
+    ans = chunks.find_all {|chunk| /<係:ト格>/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /正規化代表表記:言う\/いう/ =~ chunk}.map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}
 
 
 
@@ -52,13 +51,19 @@ class FeatureExtractor
 
     declinableChunks = getPlusChunks(noun).map {|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.find_all {|chunk| /<用言:.*?>/ =~ chunk}
 
-#.map {|chunk| mergeNormalizedForm (getNormalizedForm(chunk))}
-
-
     ans = declinableChunks.map{|chunk| "cf:" + getHyouki(getNormalizedForm(chunk)) + ":" + getDeclinableType(chunk) + ":" + getCfType(chunk, noun) + "格"}
 
     return ans
   end
+
+def getDemoFeature(noun, knpLines = @knpLines)
+# a = getPlusChunks(noun).map{|chunk| getModifier(chunk)}.flatten.find_all{|chunk| /<連体修飾>/ =~ chunk}
+
+# #この
+# #これらの
+
+# return ["demo:この"]
+end
 
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
@@ -108,9 +113,9 @@ class FeatureExtractor
     tmpChunk = ""
 
     knpLines.each do |line|
-      if /^#{Regexp.escape(ch, "U")}\s/ =~ line
+      if /^#{Regexp.escape(ch)}\s/ =~ line
         tmpChunk = line
-      elsif /^#{Regexp.escape(noun, "U")}\s/ =~ line
+      elsif /^#{Regexp.escape(noun)}\s/ =~ line
         ans << tmpChunk
       end
     end
@@ -144,7 +149,7 @@ end
 #チャンクの正規化代表表記を返す
 def getNormalizedForm(chunk)
   ans = nil
-  if /#{Regexp.escape("<正規化代表表記:","U")}(.*?)>/ =~ chunk
+  if /<正規化代表表記:(.*?)>/ =~ chunk
     ans = $1
   end
   return ans
