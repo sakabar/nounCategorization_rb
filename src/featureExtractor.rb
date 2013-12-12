@@ -82,8 +82,9 @@ index = wordChunks.find_index{|chunk| /^#{noun}/ =~ chunk}
 end
 
 def getNcf1Feature(noun, knpLines = @knpLines)
+  ans = getAstChunks(noun).find_all{|chunk| /<係:ノ格>/ =~ chunk}.map{|chunk| getModifiee(chunk)}.find_all{|chunk| not chunk.nil?}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}.map {|str| "ncf1:" + str}
 
-return nil
+return ans
 end
 
 
@@ -192,7 +193,8 @@ def mergeNormalizedForm(nForm)
       raise "ERROR: #{__LINE__}"
     end
   else
-    return nForm
+#曖昧性が無い場合は、「表記」を返す
+    return getHyouki(nForm)
   end
 end
 

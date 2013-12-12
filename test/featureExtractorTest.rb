@@ -143,6 +143,7 @@ ENDOFKNP
   def test_mergeNormalizedForm
     assert_equal("国", mergeNormalizedForm("国/くに?国/こく"))
     assert_equal("いる", mergeNormalizedForm("居る/いる?射る/いる"))
+    assert_equal("部屋", mergeNormalizedForm("部屋/へや"))
   end
 
 
@@ -268,5 +269,6 @@ ENDOFKNP
     featureExtractor = FeatureExtractor.new("pseudoID", knpLines.split("\n"))
     assert_equal(["ncf1:部屋"], featureExtractor.getNcf1Feature("太郎"))
 end
+
 
 end
