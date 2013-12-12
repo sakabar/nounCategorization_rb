@@ -87,6 +87,12 @@ def getNcf1Feature(noun, knpLines = @knpLines)
 return ans
 end
 
+def getNcf2Feature(noun, knpLines = @knpLines)
+  ans = getAstChunks(noun).map{|chunk| getModifier(chunk)}.flatten.find_all{|chunk| not chunk.nil?}.find_all{|chunk| /<係:ノ格>/ =~ chunk}.map {|chunk| getNormalizedForm(chunk)}.map {|nForm| mergeNormalizedForm(nForm)}.map {|str| "ncf2:" + str}
+
+return ans
+end
+
 
   def getModifier(chunk, knpLines = @knpLines)
     chunk_array=getChunkArray(chunk)
